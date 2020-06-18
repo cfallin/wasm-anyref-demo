@@ -1,11 +1,8 @@
-import { readFileSync } from 'fs';
-import setupWabt from 'wabt';
-
-console.clear();
+gczeal(2);
 
 const env = {
   memory: new WebAssembly.Memory({ initial: 10 }),
-  anyref_table: new WebAssembly.Table({ element: 'anyref', initial: 2 }),
+  anyref_table: new WebAssembly.Table({ element: 'externref', initial: 2 }),
   get: Reflect.get,
   alloc_struct(...args) {
     return args;
@@ -27,21 +24,7 @@ const env = {
   }
 };
 
-const wabt = setupWabt();
-const wat = readFileSync('src/main.wat', { encoding: 'utf8' });
-const features = {
-  'reference_types': true
-};
-
-const wabtModule = wabt.parseWat('src/main.wat', wat, features);
-wabtModule.resolveNames();
-wabtModule.validate(features);
-const { buffer } = wabtModule.toBinary({
-  log: true,
-  write_debug_names: true
-});
-
-const module = new WebAssembly.Module(buffer);
+const module = new WebAssembly.Module(read('./main.wasm', 'binary'));
 const imports = { env };
 const instance = new WebAssembly.Instance(module, imports);
 
