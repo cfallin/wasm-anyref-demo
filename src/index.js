@@ -5,21 +5,27 @@ const env = {
   anyref_table: new WebAssembly.Table({ element: 'externref', initial: 2 }),
   get: Reflect.get,
   alloc_struct(...args) {
+    gc();
     return args;
   },
   alloc_struct0() {
+    gc();
     return [];
   },
   alloc_struct1(a) {
+    gc();
     return [a];
   },
   alloc_struct2(a, b) {
+    gc();
     return [a, b];
   },
   alloc_struct3(a, b, c) {
+    gc();
     return [a, b, c];
   },
   log(value) {
+    gc();
     console.log(value);
   }
 };
@@ -42,3 +48,4 @@ env.anyref_table.set(0, 'Some Name');
 env.anyref_table.set(1, 'Example comment text');
 
 instance.exports.main();
+gc();
